@@ -1,0 +1,69 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity XTEA is
+Generic(w: integer := 16);
+Port(
+        Clk: in STD_LOGIC;
+        RESET: in STD_LOGIC;
+        M: in STD_LOGIC_VECTOR(2*w-1 downto 0);
+        Write_M: in STD_LOGIC;
+        ki: in STD_LOGIC_VECTOR(w-1 downto 0);
+        Write_Ki: in STD_LOGIC;
+        i: in STD_LOGIC_VECTOR(1 downto 0);
+        C: out STD_LOGIC_VECTOR(2*w-1 downto 0);
+        Done: out STD_LOGIC
+    );
+end XTEA;
+
+Architecture Structural of XTEA is
+
+    Signal zj: STD_LOGIC;
+    Signal env0: STD_LOGIC;
+    Signal env1: STD_LOGIC;
+    Signal enSUM: STD_LOGIC;
+    Signal enj: STD_LOGIC;
+    Signal enc: STD_LOGIC; 
+    Signal ldj: STD_LOGIC; 
+    Signal cycleNUM: STD_LOGIC;
+      
+BEGIN
+
+Datapath_XTEA: entity work.Datapath(Mixed)
+        Generic Map(w => w)
+        Port Map(
+                    CLk => Clk,
+                    Rst => RESET,
+                    M => M,
+                    i => i,
+                    ki => ki,
+                    Write_ki => Write_ki,
+                    Write_M => Write_M,
+                    env0 => env0,
+                    env1 => env1,
+                    enSUM => enSUM,
+                    enj => enj,
+                    enc => enc,
+                    ldj => ldj,
+                    cyclenum => cyclenum,
+                    zj => zj,
+                    c => c              
+                );
+
+Controller_XTEA: entity work.Controller(Behavioral)
+        Port Map(
+                    Write_M => Write_M,
+                    Clk => Clk,
+                    Rst => Reset,
+                    Zj => Zj,
+                    env0 => env0,
+                    env1 => env1,
+                    enSUM => enSUM,
+                    enj => enj,
+                    enc => enc,
+                    ldj => ldj,
+                    cycleNUM => cycleNUM,
+                    Done => Done
+                );
+
+END STRUCTURAL;

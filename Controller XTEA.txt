@@ -1,0 +1,82 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity Controller is
+    Port ( 
+    Write_M: in STD_LOGIC;
+    Clk: in STD_LOGIC;
+    RST: in STD_LOGIC;
+    Zj: in STD_LOGIC;
+    env0: out STD_LOGIC;
+    env1: out STD_LOGIC;
+    enSUM: out STD_LOGIC;
+    enj: out STD_LOGIC;
+    enc: out STD_LOGIC;
+    ldj: out STD_LOGIC;
+    Cyclenum: out STD_LOGIC;
+    Done: out STD_LOGIC
+    );
+end Controller;
+
+architecture Behavioral of Controller is
+
+Type State is (SWaiting,SFirstHalf,SSecondHalf,SDONE);
+Signal Present_State, Next_State: State;
+
+begin
+
+StateDec: Process(RST, Clk)
+begin
+    if RST = '1' then
+        Present_State <= SWaiting;
+    elsif rising_edge(Clk) then
+        Present_State <= Next_State;
+    end if;
+End Process;
+
+ASM: Process(Present_State, Write_M, zj)
+Begin
+
+        Next_State <= Present_State;
+        env0 <= '0';
+        env1 <= '0';
+        enSUM <= '0';
+        enj <= '0';
+        enc <= '0';
+        ldj <= '0';
+        cyclenum <= '0';
+        DONE <= '0';
+        
+        Case Present_State is
+            when SWaiting =>
+                If Write_M = '1' THEN
+                    enSUM <= '1';
+                    ldj <= '1';
+                    env0 <= '1';
+                    env1 <= '1';
+                    Next_State <= SFirstHalf;
+                ELSE
+                    Next_State <= SWaiting;
+                END IF;
+            when SFirstHalf =>
+                env0 <= '1';
+                enSUM <= '1';
+                cyclenum <= '0';
+                Next_State <= SSecondHalf;
+            when SSecondHalf =>
+                env1 <= '1';
+                cyclenum <= '1';
+                IF Zj = '1' THEN 
+                    enc <= '1';
+                    Next_State <= SDone;
+                Else
+                    Next_State <= SFirstHalf;
+                END IF;
+            when SDone =>
+                Done <= '1';
+                Next_State <= SWaiting;
+        End Case;
+
+End Process;
+
+end Behavioral;

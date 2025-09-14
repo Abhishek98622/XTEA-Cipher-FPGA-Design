@@ -1,0 +1,48 @@
+Testing: Process
+begin
+
+--RESET <= '1';
+--WAIT FOR 10ns;
+IF RUN = '0' THEN
+    
+    RESET <= '0';
+    Write_M <= '1';
+    Write_Ki <= '1';
+    i <= "00";
+    
+    WAIT FOR 10ns;
+    
+    M <= "11111111111111110000000000000000";
+    ki <= "1010101111001101";
+    
+    WAIT FOR 10ns;
+    
+    i <= "01";
+    Ki <= "1100110011001100";
+    
+    WAIT FOR 10ns;
+    
+    i <= "10";
+    ki <= "0110011001100110";
+    
+    WAIT FOR 10ns;
+    
+    i <= "11";
+    ki <= "1111111011011100";
+    
+    WAIT FOR 10ns;
+    
+    
+    Write_ki <= '0';
+    Write_M <= '0';
+    
+    WAIT FOR 10ns;
+    
+    RUN <= '1';
+    
+    WAIT FOR 10ns;
+
+
+END IF;
+
+END PROCESS;
